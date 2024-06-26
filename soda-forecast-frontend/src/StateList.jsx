@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './StateList.css';
+import config from './config';
 
 const StateList = () => {
   const [data, setData] = useState({});
@@ -7,7 +8,7 @@ const StateList = () => {
 
   const fetchPredictionForState = async (state, retries = 0) => {
     try {
-      const response = await fetch(`https://soda-py-com-cthlru34uq-uc.a.run.app/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
+      const response = await fetch(`${config.apiBaseUrl}/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
       const result = await response.json();
       const prediction = result[state];
 

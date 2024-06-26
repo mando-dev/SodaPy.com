@@ -12,5 +12,10 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env': env,
     },
+    build: {
+      rollupOptions: {
+        external: ['emailjs-com']
+      }
+    }
   };
 });
