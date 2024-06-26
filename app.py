@@ -12,6 +12,9 @@ from urllib.parse import unquote
 from cachetools import TTLCache
 import logging
 import time
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
 CORS(app)
@@ -19,7 +22,7 @@ api = Api(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
-key_path = os.getenv('SERVICE_ACCOUNT_KEY_PATH', 'serviceAccount.json')
+key_path = os.getenv('SERVICE_ACCOUNT_KEY_PATH', '/app/sodapy-96607d34a36f.json')
 scopes = ["https://www.googleapis.com/auth/cloud-platform"]
 credentials = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
 
@@ -84,6 +87,10 @@ def log_response_info(response):
     app.logger.debug('Response: %s', response.status)
     return response
 
+@app.route("/")
+def home():
+    return jsonify({"message": "Welcome to the Soda Consumption Prediction API!"})
+
 class Prediction(Resource):
     def get(self):
         state = unquote(request.args.get('state'))
@@ -117,5 +124,6 @@ safety_settings = [
 
 api.add_resource(Prediction, '/prediction')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
