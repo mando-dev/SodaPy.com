@@ -7,7 +7,7 @@ const StateList = () => {
 
   const fetchPredictionForState = async (state, retries = 0) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
+      const response = await fetch(`https://soda-py-com-cthlru34uq-uc.a.run.app/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
       const result = await response.json();
       const prediction = result[state];
 
