@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flask_restful import Resource, Api
 from google.oauth2 import service_account
@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='')
 CORS(app)
 api = Api(app)
 
@@ -88,8 +88,12 @@ def log_response_info(response):
     return response
 
 @app.route("/")
-def home():
-    return jsonify({"message": "Welcome to the Soda Consumption Prediction API!"})
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route("/<path:path>")
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
 
 class Prediction(Resource):
     def get(self):
@@ -125,5 +129,5 @@ safety_settings = [
 api.add_resource(Prediction, '/prediction')
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 8080))
+    port = int(os.getenv('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
