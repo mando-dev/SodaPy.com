@@ -22,13 +22,18 @@ api = Api(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
-key_path = os.getenv('SERVICE_ACCOUNT_KEY_PATH', '/app/sodapy-96607d34a36f.json')
+# Directly specify the path to your service account file here
+key_path = 'sodapy-96607d34a36f.json'
 scopes = ["https://www.googleapis.com/auth/cloud-platform"]
 credentials = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
 
 PROJECT_NUMBER = os.getenv('PROJECT_NUMBER')
 ENDPOINT_ID = os.getenv('ENDPOINT_ID')
 endpoint_name = f"projects/{PROJECT_NUMBER}/locations/us-central1/endpoints/{ENDPOINT_ID}"
+
+app.logger.debug(f"PROJECT_NUMBER: {PROJECT_NUMBER}")
+app.logger.debug(f"ENDPOINT_ID: {ENDPOINT_ID}")
+app.logger.debug(f"Service Account Key Path: {key_path}")
 
 states = [
     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida",
@@ -128,6 +133,8 @@ safety_settings = [
 
 api.add_resource(Prediction, '/prediction')
 
+
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
+

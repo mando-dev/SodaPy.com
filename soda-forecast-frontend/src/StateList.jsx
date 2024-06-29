@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './StateList.css';
-import config from './config';
 
 const StateList = () => {
   const [data, setData] = useState({});
-  const [retryStates, setRetryStates] = useState({});
+  const apiBaseUrl = "http://localhost:5000";
 
   const fetchPredictionForState = async (state, retries = 0) => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
+      console.log(`Fetching prediction for ${state}`);
+      const response = await fetch(`${apiBaseUrl}/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const result = await response.json();
+      console.log(`Result for ${state}:`, result);
       const prediction = result[state];
 
       if (prediction === 'No percentage found' || (prediction && prediction.length === 4 && /^\d{4}$/.test(prediction))) {
@@ -24,11 +28,11 @@ const StateList = () => {
         return { state, prediction };
       }
     } catch (error) {
+      console.error(`Error fetching data for ${state}:`, error);
       if (retries < 5) {
         await new Promise(res => setTimeout(res, 2000)); // Add a delay before retrying
         return await fetchPredictionForState(state, retries + 1);
       } else {
-        console.error(`Error fetching data for ${state}:`, error);
         return { state, prediction: 'Loading...' };
       }
     }
@@ -89,4 +93,3 @@ const StateList = () => {
 };
 
 export default StateList;
-

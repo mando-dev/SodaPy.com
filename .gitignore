@@ -27,4 +27,4 @@ dist-ssr
 .env
 serviceAccount*.json
 OAuth.json
-sodapy-96607d34a36f.json
+!sodapy-96607d34a36f.json

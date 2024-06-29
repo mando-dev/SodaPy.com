@@ -13,3 +13,16 @@ dist/
 node_modules/
 .git/
 .gitignore
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Ensure important files are included
+!requirements.txt
+!app.py
+!sodapy-96607d34a36f.json
+!static/
+
