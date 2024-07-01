@@ -23,6 +23,7 @@ google-api-core==2.19.0
 google-api-python-client==2.133.0
 google-auth==2.30.0
 google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.0
 google-cloud-aiplatform==1.49.0
 google-cloud-bigquery==3.24.0
 google-cloud-core==2.4.1
@@ -44,6 +45,7 @@ MarkupSafe==2.1.5
 multidict==6.0.5
 numpy==1.26.4
 nvm==1.0.21
+oauthlib==3.2.2
 packaging==24.1
 pandas==2.2.2
 proto-plus==1.23.0
@@ -57,6 +59,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.1
 requests==2.32.3
+requests-oauthlib==2.0.0
 rsa==4.9
 shapely==2.0.4
 six==1.16.0

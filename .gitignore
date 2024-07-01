@@ -22,12 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
 # Custom entries
 .env
 serviceAccount*.json
 OAuth.json
 sodapy-96607d34a36f.json
 
+# Python cache
 __pycache__/
 *.pyc
-sodapy-96607d34a36f.json
