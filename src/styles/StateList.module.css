@@ -1,0 +1,53 @@
+.stateListContainer {
+  text-align: center;
+  padding: 20px;
+}
+
+.stateListColumns {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.stateListItem {
+  background-color: #444;
+  color: white;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.footer {
+  color: plum; /* Text color */
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 24px;
+  border-top: 2px solid #333; /* Optional: add a border for better separation */
+}
+
+.title {
+  color: plum; /* Text color */
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 36px;
+  border-top: 1px solid #333; /* Optional: add a border for better separation */
+}
+
+.title2 {
+  color: plum; /* Text color */
+  padding: 1px;
+  text-align: center;
+  font-size: 20px;
+  border-top: 0;
+}
+
+.stateListContainer h3 {
+  max-width: 600px; /* Adjust this value to your preferred width */
+  margin: 0 auto; /* Center the text */
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
