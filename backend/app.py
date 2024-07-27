@@ -17,8 +17,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask_compress import Compress
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from .env.local
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env.local'))
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -28,13 +28,20 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 Compress(app)
 api = Api(app)
 
-key_path = 'sodapy-96607d34a36f.json'
+# Load environment variables
+key_path = os.getenv('KEY_PATH')
+print(f"Key path: {key_path}")  # Debugging line
+
 scopes = ["https://www.googleapis.com/auth/cloud-platform"]
 credentials = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
 
 PROJECT_NUMBER = os.getenv('PROJECT_NUMBER')
 ENDPOINT_ID = os.getenv('ENDPOINT_ID')
+print(f"Project Number: {PROJECT_NUMBER}")  # Debugging line
+print(f"Endpoint ID: {ENDPOINT_ID}")  # Debugging line
+
 endpoint_name = f"projects/{PROJECT_NUMBER}/locations/us-central1/endpoints/{ENDPOINT_ID}"
+print(f"Endpoint Name: {endpoint_name}")  # Debugging line
 
 states = [
     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida",
@@ -134,38 +141,11 @@ def serve_static(path):
     response.cache_control.max_age = 86400
     return response
 
-class Prediction(Resource):
-    def get(self):
-        logging.debug("Received request for prediction")
-        state = unquote(request.args.get('state'))
-        logging.debug(f"Request state: {state}")
-        if state not in states:
-            return {'error': 'Invalid state'}, 400
-
-        vertexai.init(project=PROJECT_NUMBER, location="us-central1", credentials=credentials)
-        model = GenerativeModel(endpoint_name)
-        
-        future = executor.submit(fetch_prediction, state, model)
-        prediction = future.result()
-        logging.debug(f"Prediction result: {prediction}")
-        return jsonify({state: prediction})
-
-generation_config = GenerationConfig(max_output_tokens=2048, temperature=1, top_p=1)
-safety_settings = [
-    SafetySetting(category=HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold=HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE),
-    SafetySetting(category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold=HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE),
-    SafetySetting(category=HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold=HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE),
-    SafetySetting(category=HarmCategory.HARM_CATEGORY_HARASSMENT, threshold=HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE),
-]
-
-api.add_resource(Prediction, '/prediction')
-
+# Ensure you schedule the fetch_all_predictions to run at the desired interval
 scheduler = BackgroundScheduler()
 scheduler.add_job(fetch_all_predictions, 'interval', hours=1)
 scheduler.start()
 
-fetch_all_predictions()
-
 if __name__ == "__main__":
-    port = int(os.getenv('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    fetch_all_predictions()
+    app.run(host='0.0.0.0', port=8080)
