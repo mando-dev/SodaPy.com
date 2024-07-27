@@ -1,7 +1,16 @@
 import styles from '../styles/StateList.module.css';
 import EmailForm from '../components/EmailForm';
+import { getSodaData } from '../utils/sodaData';
 
-const StateList = ({ data }) => {
+type StateData = {
+  [key: string]: string;
+};
+
+interface Props {
+  data: StateData;
+}
+
+const StateList = ({ data }: Props) => {
   const states = [
     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida",
     "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine",
@@ -30,7 +39,6 @@ const StateList = ({ data }) => {
 };
 
 export const getStaticProps = async () => {
-  const axios = require('axios');
   const states = [
     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida",
     "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine",
@@ -39,16 +47,14 @@ export const getStaticProps = async () => {
     "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas",
     "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
   ];
-  const data = {};
-  for (const state of states) {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${state}`);
-      data[state] = response.data[state];
-    } catch (error) {
-      data[state] = 'Loading...';
-    }
+
+  try {
+    const data = await getSodaData(states);
+    return { props: { data }, revalidate: 86400 }; // Regenerate the page every 24 hours
+  } catch (error) {
+    console.error('Error fetching soda data:', error);
+    return { props: { data: {} }, revalidate: 86400 };
   }
-  return { props: { data }, revalidate: 600 }; // Regenerate the page every 10 minutes
 };
 
 export default StateList;

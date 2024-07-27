@@ -41,4 +41,5 @@ node_modules/
 .next/
 venv/
 .DS_Store
-backend/sodapy-96607d34a36f.json
+backend/SSR-key.json
+
