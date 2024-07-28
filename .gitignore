@@ -42,3 +42,7 @@ node_modules/
 venv/
 .DS_Store
 backend/sodapy-96607d34a36f.json
+
+# Ignore service account keys
+sodapy-96607d34a36f.json
+SSR-key.json
