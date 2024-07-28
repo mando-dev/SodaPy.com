@@ -1,3 +1,4 @@
+"use client"
 import styles from "../styles/StateList.module.css";
 import EmailForm from "../components/EmailForm";
 import { useEffect, useState } from "react";
@@ -144,7 +145,7 @@ const StateList = ({ initialData }) => {
 export const getStaticProps = async () => {
   // Used the common function to be used in the component and for initial data load
   const predictionData = await fetchStateData();
-  return { props: { initialData: predictionData }, revalidate: 600 }; // Regenerate the page every 10 minutes
+  return { props: { initialData: predictionData } }; // Regenerate the page every 10 minutes
 };
 
 export default StateList;
