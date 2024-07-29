@@ -161,7 +161,7 @@ safety_settings = [
 api.add_resource(Prediction, '/prediction')
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(fetch_all_predictions, 'interval', hours=1)
+scheduler.add_job(fetch_all_predictions, 'interval', hours=24)  # Every 24 hours
 scheduler.start()
 
 fetch_all_predictions()

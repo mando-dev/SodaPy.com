@@ -20,8 +20,10 @@
   align-items: center;
 }
 
-label {
+.form label {
   margin: 5px 0;
+  color: white;
+  font-size: 1.2em; /* Increased font size */
 }
 
 .inputText, .inputEmail, .textarea {
@@ -32,14 +34,20 @@ label {
   border-radius: 4px;
 }
 
+.textarea {
+  height: 100px; /* Further reduced height */
+}
+
 .submitButton {
   background-color: #4CAF50;
   color: white;
-  padding: 10px 20px;
+  padding: 15px 30px; /* Increased padding */
   border: none;
-  border-radius: 4px;
+  border-radius: 8px; /* Increased border radius */
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 20px; /* Increased margin top */
+  font-size: 18px; /* Increased font size */
+  font-weight: bold; /* Bold text */
 }
 
 .submitButton:hover {
@@ -49,5 +57,11 @@ label {
 .successMessage {
   color: green;
   font-size: 3.2em;
+  margin-top: 10px;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 1.5em;
   margin-top: 10px;
 }

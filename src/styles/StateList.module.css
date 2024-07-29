@@ -1,11 +1,18 @@
 .stateListContainer {
   text-align: center;
   padding: 20px;
+  background-color: #2c2c2c; /* Lighter gray background */
 }
 
 .stateListColumns {
   display: flex;
   justify-content: center;
+  gap: 10px;
+}
+
+.stateListColumn {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
@@ -15,7 +22,8 @@
   padding: 10px;
   margin: 5px 0;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 16px; /* Increased font size */
+  font-family: Arial, Helvetica, sans-serif; /* Changed font family */
 }
 
 .footer {
@@ -23,8 +31,9 @@
   padding: 10px;
   font-weight: bold;
   text-align: center;
-  font-size: 24px;
-  border-top: 2px solid #333; /* Optional: add a border for better separation */
+  font-size: 30px; /* Increased font size */
+  border-top: 0; /* Removed border */
+  margin-top: 20px; /* Added margin for spacing */
 }
 
 .title {
@@ -33,7 +42,7 @@
   font-weight: bold;
   text-align: center;
   font-size: 36px;
-  border-top: 1px solid #333; /* Optional: add a border for better separation */
+  border-top: 0; /* Removed border */
 }
 
 .title2 {
@@ -50,4 +59,6 @@
   padding: 10px;
   text-align: center;
   color: white;
+  line-height: 1.8; /* Adjust line height for more spacing between lines */
+  margin-bottom: 20px; /* Adjust bottom margin for more spacing below the paragraph */
 }

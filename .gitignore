@@ -35,17 +35,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# .gitignore
-.env.local
-node_modules/
-.next/
-venv/
-.DS_Store
-backend/sodapy-96607d34a36f.json
-
 # Ignore service account keys
 sodapy-96607d34a36f.json
 SSR-key.json
+
 # Ignore Python bytecode files
 *.pyc
 __pycache__/
@@ -53,13 +46,5 @@ __pycache__/
 # Ignore environment variables
 .env
 
-# Ignore service account keys
-sodapy-96607d34a36f.json
-SSR-key.json
-
 # Node.js dependencies
 node_modules/
-
-# Next.js build output
-.next/
-out/
