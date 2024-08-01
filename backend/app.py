@@ -77,7 +77,7 @@ def filter_response(text):
 def fetch_prediction(state, model):
     if state in cache:
         return cache[state]
-    
+
     retries = 5
     for attempt in range(retries):
         prompt = f"Please provide the soda consumption prediction percentage for {state} in the next year as a percentage."
@@ -91,10 +91,10 @@ def fetch_prediction(state, model):
         except Exception as e:
             logging.error(f"Error fetching prediction for {state}: {e}")
             time.sleep(2 ** attempt)
-    
-    cache[state] = 'next hour'
-    logging.info(f"Default prediction used for {state}: next hour")
-    return 'next hour'
+
+    cache[state] = 'next month'
+    logging.info(f"Default prediction used for {state}: next month")
+    return 'next month'
 
 def fetch_all_predictions():
     try:
@@ -111,13 +111,13 @@ def fetch_all_predictions():
                     prediction = future.result()
                     if prediction is None:
                         prediction = cache.get(state, 'No percentage found')
-                        if prediction is None:
-                            prediction = 'No percentage found'
+                    if prediction is None:
+                        prediction = 'next month'
                     cache[state] = prediction
                     logging.info(f"Prediction for {state}: {prediction}")
                 except Exception as e:
                     logging.error(f"Error in fetch_all_predictions for {state}: {e}")
-                    cache[state] = cache.get(state, 'No percentage found')
+                    cache[state] = cache.get(state, 'next month')
     except Exception as e:
         logging.error(f"Failed to fetch all predictions: {e}")
 
@@ -132,7 +132,7 @@ def serve():
     response.cache_control.max_age = 86400
     return response
 
-@app.route("/<path:path>")
+@app.route("/")
 def serve_static(path):
     response = make_response(send_from_directory(app.static_folder, path))
     response.cache_control.max_age = 86400
@@ -148,7 +148,6 @@ class Prediction(Resource):
 
         vertexai.init(project=PROJECT_NUMBER, location="us-central1", credentials=credentials)
         model = GenerativeModel(endpoint_name)
-        
         future = executor.submit(fetch_prediction, state, model)
         prediction = future.result()
         logging.debug(f"Prediction result: {prediction}")
@@ -197,7 +196,7 @@ api.add_resource(Prediction, '/prediction')
 api.add_resource(PredictSoda, '/predict')
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(fetch_all_predictions, 'interval', hours=24)  # Every 24 hours
+scheduler.add_job(fetch_all_predictions, 'interval', days=31)  # Every 31 days
 scheduler.start()
 
 fetch_all_predictions()

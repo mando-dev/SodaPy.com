@@ -32,6 +32,8 @@
   margin: 5px 0;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: black; /* Set background color to black */
+  color: white; /* Set text color to white */
 }
 
 .textarea {
@@ -64,4 +66,8 @@
   color: red;
   font-size: 1.5em;
   margin-top: 10px;
+}
+
+.contactTitle {
+  color: white; /* Set the text color to white */
 }

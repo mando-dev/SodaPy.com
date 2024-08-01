@@ -2,6 +2,7 @@
   text-align: center;
   padding: 20px;
   background-color: #2c2c2c; /* Lighter gray background */
+  margin: -8px; 
 }
 
 .stateListColumns {
@@ -10,11 +11,7 @@
   gap: 10px;
 }
 
-.stateListColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+
 
 .stateListItem {
   background-color: #444;
@@ -34,6 +31,7 @@
   font-size: 30px; /* Increased font size */
   border-top: 0; /* Removed border */
   margin-top: 20px; /* Added margin for spacing */
+
 }
 
 .title {
@@ -41,16 +39,20 @@
   padding: 10px;
   font-weight: bold;
   text-align: center;
-  font-size: 36px;
+  font-size: 40px;
   border-top: 0; /* Removed border */
+  border: none; /* Ensure no border */
+  outline: none; /* Ensure no outline */
 }
 
 .title2 {
   color: plum; /* Text color */
   padding: 1px;
   text-align: center;
-  font-size: 20px;
+  font-size: 25px;
   border-top: 0;
+  border: none; /* Ensure no border */
+  outline: none; /* Ensure no outline */
 }
 
 .stateListContainer h3 {
@@ -60,5 +62,12 @@
   text-align: center;
   color: white;
   line-height: 1.8; /* Adjust line height for more spacing between lines */
-  margin-bottom: 20px; /* Adjust bottom margin for more spacing below the paragraph */
+  margin-bottom: 10px; /* Adjust bottom margin for more spacing below the paragraph */
+  font-size: 25px;
+}
+
+.specificText {
+  color: white;
+  border: none; /* Ensure no border */
+  outline: none; /* Ensure no outline */
 }

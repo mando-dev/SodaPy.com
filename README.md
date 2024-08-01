@@ -3,6 +3,7 @@
 ## Project Overview
 You gotta  have two .env files. One in the root directory and one inside the backend folder. You also need a json key to authenticate into using Vertex AI API of my fine tuned model of Gemini. I can send you the key privately or generate one for you. But name of my current key file is “sodapy-96607d34a36f.json” that is stored inside the backend folder. Then you an run both backend and frontend server in development. To run frontend from root, you run “npm run dev”, and from backend folder you run “docker run -p 8080:8080 sodapy”  Dockerfle is located inside backend folder. Checkout the requirements.txt  to see dependencies/installments. 
 
+build image then docker run the npm run build then copy all files to satic foder   cp -r out/* backend/static/
 
 
 

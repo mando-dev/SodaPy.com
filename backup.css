@@ -1,0 +1,73 @@
+.stateListContainer {
+    text-align: center;
+    padding: 20px;
+    background-color: #2c2c2c; /* Lighter gray background */
+  }
+  
+  .stateListColumns {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  
+  
+  .stateListItem {
+    background-color: #444;
+    color: white;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-size: 16px; /* Increased font size */
+    font-family: Arial, Helvetica, sans-serif; /* Changed font family */
+  }
+  
+  .footer {
+    color: plum; /* Text color */
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 30px; /* Increased font size */
+    border-top: 0; /* Removed border */
+    margin-top: 20px; /* Added margin for spacing */
+  
+  }
+  
+  .title {
+    color: plum; /* Text color */
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 36px;
+    border-top: 0; /* Removed border */
+    border: none; /* Ensure no border */
+    outline: none; /* Ensure no outline */
+  }
+  
+  .title2 {
+    color: plum; /* Text color */
+    padding: 1px;
+    text-align: center;
+    font-size: 20px;
+    border-top: 0;
+    border: none; /* Ensure no border */
+    outline: none; /* Ensure no outline */
+  }
+  
+  .stateListContainer h3 {
+    max-width: 600px; /* Adjust this value to your preferred width */
+    margin: 0 auto; /* Center the text */
+    padding: 10px;
+    text-align: center;
+    color: white;
+    line-height: 1.8; /* Adjust line height for more spacing between lines */
+    margin-bottom: 20px; /* Adjust bottom margin for more spacing below the paragraph */
+  
+  }
+  
+  .specificText {
+    color: white;
+    border: none; /* Ensure no border */
+    outline: none; /* Ensure no outline */
+  }
+  

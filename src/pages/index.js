@@ -76,7 +76,7 @@ const fetchPredictionForState = async (state, retries = 0) => {
         return { state, prediction: "next hour" };
       }
     } else {
-      return { state, prediction: `${prediction}%` };
+      return { state, prediction: prediction.includes('%') ? prediction : `${prediction}%` };
     }
   } catch (error) {
     console.error(`Error fetching data for ${state}:`, error);
@@ -128,15 +128,11 @@ const StateList = ({ initialData }) => {
 
   return (
     <div className={styles.stateListContainer}>
-      <h3>
-        This app is to help prevent Kidney Failure. I donated my kidney to my
-        father and I don&apos;t want other people to go through the same
-        surgery. By identifying where soda consumption is highest, we can kill
-        the problem at its root. High Fructose Corn Syrup (found much in soda)
-        is the number one contributor to Kidney Failure.
+      <h3 className={styles.specificText}>
+        I donated my kidney to my father.<br /> Sodais the number one contributor to Kidney Failure.
       </h3>
       <h1 className={styles.title}>Soda Consumption Predictions</h1>
-      <h2 className={styles.title2}>in Real Time (every 24 hours)</h2>
+      <h2 className={styles.title2}>in Real Time (every month)</h2>
       <div className={styles.stateListColumns}>
         {columns.map((column, colIndex) => (
           <div key={colIndex} className={styles.stateListColumn}>
