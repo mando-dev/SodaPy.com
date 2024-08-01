@@ -9,6 +9,9 @@ ENV SERVICE_ACCOUNT_KEY_PATH=/app/sodapy-96607d34a36f.json
 # Set the working directory
 WORKDIR /app
 
+# Update pip to the latest version
+RUN pip install --upgrade pip
+
 # Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

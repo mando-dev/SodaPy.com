@@ -17,3 +17,8 @@ vertexai
 cachetools
 python-dotenv
 apscheduler
+pandas
+xgboost
+statsmodels
+joblib
+
