@@ -12,7 +12,7 @@ Arima_model.pkl
 Then you will load this file in the backend folder.
 
 FILE 
-Sodapy-96607d34a36f.json
+JSONKEY file
 
 Then you will create a docker image/container to run the backend file ‘app.py’ from the backend folder. 
 
