@@ -1,5 +1,33 @@
 ## SodaPy.com
 
+First you will load the these two files in the root directory:
+
+FILE 1
+Xgboost_model_tuned.json
+
+FILE 2
+Arima_model.pkl
+
+
+Then you will load this file in the backend folder.
+
+FILE 
+Sodapy-96607d34a36f.json
+
+Then you will create a docker image/container to run the backend file ‘app.py’ from the backend folder. 
+
+While the backend is running you will run ‘npm run build’ from the root directory which will create an ‘out’ folder. Copy this ‘out’ folders’ files to the static folder in the backend folder. 
+
+Then run ‘npm run dev’ at root directory to run the frontend. 
+
+There should be two ‘.env’ files: one at root and one at backend folder.
+
+Thats it. 
+
+
+
+
+
 ## Project Overview
 You gotta  have two .env files. One in the root directory and one inside the backend folder. You also need a json key to authenticate into using Vertex AI API of my fine tuned model of Gemini. I can send you the key privately or generate one for you. But name of my current key file is “JSON key file” that is stored inside the backend folder. Then you an run both backend and frontend server in development. To run frontend from root, you run “npm run dev”, and from backend folder you run “docker run -p 8080:8080 sodapy”  Dockerfle is located inside backend folder. Checkout the requirements.txt  to see dependencies/installments. 
 
