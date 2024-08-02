@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import styles from "../styles/StateList.module.css";
 import EmailForm from "../components/EmailForm";
 import { useEffect, useState } from "react";
@@ -7,13 +8,11 @@ const states = ["Texas"];
 
 const fetchPredictionForState = async (state, retries = 0) => {
   try {
-    console.log(`Fetching prediction for ${state}`);
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const result = await response.json();
-    console.log(`Result for ${state}:`, result);
     const prediction = result[state];
 
     if (prediction === "No percentage found" || (prediction && prediction.length === 4 && /^\d{4}$/.test(prediction))) {
@@ -21,14 +20,12 @@ const fetchPredictionForState = async (state, retries = 0) => {
         await new Promise((res) => setTimeout(res, 2000)); // Add a delay before retrying
         return await fetchPredictionForState(state, retries + 1);
       } else {
-        console.error(`Max retries reached for ${state}`);
         return { state, prediction: "next hour" };
       }
     } else {
       return { state, prediction: prediction.includes('%') ? prediction : `${prediction}%` };
     }
   } catch (error) {
-    console.error(`Error fetching data for ${state}:`, error);
     if (retries < 5) {
       await new Promise((res) => setTimeout(res, 2000)); // Add a delay before retrying
       return await fetchPredictionForState(state, retries + 1);
@@ -69,6 +66,14 @@ const StateList = ({ initialData }) => {
 
   return (
     <div className={styles.stateListContainer}>
+      <Image
+        src="/profile-pic.jpg"
+        alt="Profile Picture"
+        width={250}
+        height={250}
+        priority={true}
+        className={styles.profilePic}
+      />
       <h3 className={styles.specificText}>
         I donated my kidney to my father.<br /> Soda is the number one contributor to Kidney Failure.
       </h3>

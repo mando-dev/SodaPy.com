@@ -42,8 +42,8 @@ const EmailForm = () => {
 
   return (
     <div className={styles.emailFormContainer}>
-      <h1 className={styles.contactTitle}>Contact Me: Mando</h1>
-      <Image src={profilePic} alt="Your face" className={styles.profilePic} />
+      <h1 className={styles.contactMeTitle}>Contact Me: Mando</h1>
+      <Image src={profilePic} alt="Your face" className={styles.profilePic} priority />
       {emailSent && <p className={styles.successMessage}>Email sent successfully!</p>}
       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
       <form ref={form} onSubmit={sendEmail} className={styles.form}>

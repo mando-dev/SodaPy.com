@@ -1,11 +1,9 @@
 import os
-import logging
 from flask import Flask, jsonify, request, send_from_directory, make_response
 from flask_cors import CORS
 from flask_restful import Resource, Api
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
-import google.auth
 import vertexai
 from vertexai.preview.generative_models import GenerativeModel, GenerationConfig, SafetySetting, HarmCategory, HarmBlockThreshold
 import re
@@ -23,9 +21,6 @@ import joblib
 
 # Load environment variables
 load_dotenv()
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__, static_folder='static', static_url_path='/')
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
@@ -49,15 +44,13 @@ def refresh_credentials_with_retry(credentials, retries=3, delay=5):
     for attempt in range(retries):
         try:
             credentials.refresh(Request())
-            logging.info("Credentials refreshed successfully")
             return
-        except google.auth.exceptions.RefreshError as e:
-            logging.error(f"Failed to refresh credentials: {e}")
+        except google.auth.exceptions.RefreshError:
             if attempt < retries - 1:
                 time.sleep(delay)
                 continue
             else:
-                raise e
+                raise
 
 def filter_response(text):
     match = re.search(r"\b\d+(\.\d+)?%?\b", text)
@@ -79,40 +72,24 @@ def fetch_prediction(state, model):
             prediction = filter_response(response.text)
             if prediction is not None:
                 cache[state] = prediction
-                logging.info(f"Prediction fetched for {state}: {prediction}")
                 return prediction
-        except Exception as e:
-            logging.error(f"Error fetching prediction for {state}: {e}")
+        except Exception:
             time.sleep(2 ** attempt)
 
     cache[state] = 'next month'
-    logging.info(f"Default prediction used for {state}: next month")
     return 'next month'
 
 def fetch_all_predictions():
-    try:
-        refresh_credentials_with_retry(credentials)
-        vertexai.init(project=PROJECT_NUMBER, location="us-central1", credentials=credentials)
-        model = GenerativeModel(endpoint_name)
-        logging.info("Vertex AI model initialized")
+    refresh_credentials_with_retry(credentials)
+    vertexai.init(project=PROJECT_NUMBER, location="us-central1", credentials=credentials)
+    model = GenerativeModel(endpoint_name)
 
-        with ThreadPoolExecutor() as executor:
-            future_to_state = {executor.submit(fetch_prediction, state, model): state for state in states}
-            for future in as_completed(future_to_state):
-                state = future_to_state[future]
-                try:
-                    prediction = future.result()
-                    if prediction is None:
-                        prediction = cache.get(state, 'No percentage found')
-                    if prediction is None:
-                        prediction = 'next month'
-                    cache[state] = prediction
-                    logging.info(f"Prediction for {state}: {prediction}")
-                except Exception as e:
-                    logging.error(f"Error in fetch_all_predictions for {state}: {e}")
-                    cache[state] = cache.get(state, 'next month')
-    except Exception as e:
-        logging.error(f"Failed to fetch all predictions: {e}")
+    with ThreadPoolExecutor() as executor:
+        future_to_state = {executor.submit(fetch_prediction, state, model): state for state in states}
+        for future in as_completed(future_to_state):
+            state = future_to_state[future]
+            prediction = future.result() or cache.get(state, 'next month')
+            cache[state] = prediction
 
 @app.after_request
 def add_header(response):
@@ -125,7 +102,7 @@ def serve():
     response.cache_control.max_age = 86400
     return response
 
-@app.route("/")
+@app.route("/<path:path>")
 def serve_static(path):
     response = make_response(send_from_directory(app.static_folder, path))
     response.cache_control.max_age = 86400
@@ -133,9 +110,7 @@ def serve_static(path):
 
 class Prediction(Resource):
     def get(self):
-        logging.debug("Received request for prediction")
         state = unquote(request.args.get('state'))
-        logging.debug(f"Request state: {state}")
         if state not in states:
             return {'error': 'Invalid state'}, 400
 
@@ -143,7 +118,6 @@ class Prediction(Resource):
         model = GenerativeModel(endpoint_name)
         future = executor.submit(fetch_prediction, state, model)
         prediction = future.result()
-        logging.debug(f"Prediction result: {prediction}")
         return jsonify({state: prediction})
 
 class PredictSoda(Resource):
