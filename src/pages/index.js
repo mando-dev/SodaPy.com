@@ -3,58 +3,7 @@ import styles from "../styles/StateList.module.css";
 import EmailForm from "../components/EmailForm";
 import { useEffect, useState } from "react";
 
-const states = [
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-  "Connecticut",
-  "Delaware",
-  "Florida",
-  "Georgia",
-  "Hawaii",
-  "Idaho",
-  "Illinois",
-  "Indiana",
-  "Iowa",
-  "Kansas",
-  "Kentucky",
-  "Louisiana",
-  "Maine",
-  "Maryland",
-  "Massachusetts",
-  "Michigan",
-  "Minnesota",
-  "Mississippi",
-  "Missouri",
-  "Montana",
-  "Nebraska",
-  "Nevada",
-  "New Hampshire",
-  "New Jersey",
-  "New Mexico",
-  "New York",
-  "North Carolina",
-  "North Dakota",
-  "Ohio",
-  "Oklahoma",
-  "Oregon",
-  "Pennsylvania",
-  "Rhode Island",
-  "South Carolina",
-  "South Dakota",
-  "Tennessee",
-  "Texas",
-  "Utah",
-  "Vermont",
-  "Virginia",
-  "Washington",
-  "West Virginia",
-  "Wisconsin",
-  "Wyoming",
-];
+const states = ["Texas"];
 
 const fetchPredictionForState = async (state, retries = 0) => {
   try {
@@ -118,31 +67,21 @@ const StateList = ({ initialData }) => {
     return () => clearInterval(intervalId); // Clean up interval on component unmount
   }, []);
 
-  // Sort states alphabetically and distribute them into three columns
-  const sortedStates = [...states].sort();
-  const numOfColumns = 3;
-  const statesPerColumn = Math.ceil(sortedStates.length / numOfColumns);
-  const columns = Array.from({ length: numOfColumns }, (_, colIndex) =>
-    sortedStates.slice(colIndex * statesPerColumn, (colIndex + 1) * statesPerColumn)
-  );
-
   return (
     <div className={styles.stateListContainer}>
       <h3 className={styles.specificText}>
-        I donated my kidney to my father.<br /> Sodais the number one contributor to Kidney Failure.
+        I donated my kidney to my father.<br /> Soda is the number one contributor to Kidney Failure.
       </h3>
       <h1 className={styles.title}>Soda Consumption Predictions</h1>
       <h2 className={styles.title2}>in Real Time (every month)</h2>
       <div className={styles.stateListColumns}>
-        {columns.map((column, colIndex) => (
-          <div key={colIndex} className={styles.stateListColumn}>
-            {column.map((state) => (
-              <div key={state} className={styles.stateListItem}>
-                {state}: {data[state] || "Loading..."}
-              </div>
-            ))}
-          </div>
-        ))}
+        <div className={styles.stateListColumn}>
+          {states.map((state) => (
+            <div key={state} className={styles.stateListItem}>
+              {state}: {data[state] || "Loading..."}
+            </div>
+          ))}
+        </div>
       </div>
       <footer className={styles.footer}>Powered by Gemini API</footer>
       <EmailForm />
