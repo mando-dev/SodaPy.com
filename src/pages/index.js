@@ -3,63 +3,13 @@ import styles from "../styles/StateList.module.css";
 import EmailForm from "../components/EmailForm";
 import { useEffect, useState } from "react";
 
-const states = [
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-  "Connecticut",
-  "Delaware",
-  "Florida",
-  "Georgia",
-  "Hawaii",
-  "Idaho",
-  "Illinois",
-  "Indiana",
-  "Iowa",
-  "Kansas",
-  "Kentucky",
-  "Louisiana",
-  "Maine",
-  "Maryland",
-  "Massachusetts",
-  "Michigan",
-  "Minnesota",
-  "Mississippi",
-  "Missouri",
-  "Montana",
-  "Nebraska",
-  "Nevada",
-  "New Hampshire",
-  "New Jersey",
-  "New Mexico",
-  "New York",
-  "North Carolina",
-  "North Dakota",
-  "Ohio",
-  "Oklahoma",
-  "Oregon",
-  "Pennsylvania",
-  "Rhode Island",
-  "South Carolina",
-  "South Dakota",
-  "Tennessee",
-  "Texas",
-  "Utah",
-  "Vermont",
-  "Virginia",
-  "Washington",
-  "West Virginia",
-  "Wisconsin",
-  "Wyoming",
-];
+const state = "Texas";
 
-const fetchPredictionForState = async (state, retries = 0) => {
+const fetchPredictionForState = async (retries = 0, forceRefresh = false) => {
   try {
     console.log(`Fetching prediction for ${state}`);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${encodeURIComponent(state)}`, { timeout: 10000 });
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${encodeURIComponent(state)}&force_refresh=${forceRefresh}`;
+    const response = await fetch(url, { timeout: 10000 });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -67,86 +17,54 @@ const fetchPredictionForState = async (state, retries = 0) => {
     console.log(`Result for ${state}:`, result);
     const prediction = result[state];
 
-    if (prediction === "No percentage found" || (prediction && prediction.length === 4 && /^\d{4}$/.test(prediction))) {
-      if (retries < 5) {
-        await new Promise((res) => setTimeout(res, 2000)); // Add a delay before retrying
-        return await fetchPredictionForState(state, retries + 1);
-      } else {
-        console.error(`Max retries reached for ${state}`);
-        return { state, prediction: "next hour" };
-      }
+    if (prediction === "refresh your browser") {
+      return { state, prediction: "refresh your browser" };
     } else {
       return { state, prediction: `${prediction}%` };
     }
   } catch (error) {
     console.error(`Error fetching data for ${state}:`, error);
-    if (retries < 5) {
+    if (retries < 10) {
       await new Promise((res) => setTimeout(res, 2000)); // Add a delay before retrying
-      return await fetchPredictionForState(state, retries + 1);
+      return await fetchPredictionForState(retries + 1, forceRefresh);
     } else {
-      return { state, prediction: "Loading..." };
+      return { state, prediction: "refresh your browser" };
     }
   }
 };
 
-// Common Function to be Used to fetch all the prediction data of state
-async function fetchStateData() {
-  const newData = await Promise.all(
-    states.map(async (state) => {
-      return await fetchPredictionForState(state);
-    })
-  );
-
-  // Collect all the data in a common object
-  const dataObject = newData.reduce((acc, { state, prediction }) => {
-    acc[state] = prediction;
-    return acc;
-  }, {});
-
-  return dataObject;
+async function fetchStateData(forceRefresh = false) {
+  const { state, prediction } = await fetchPredictionForState(0, forceRefresh);
+  return { [state]: prediction };
 }
 
 const StateList = ({ initialData }) => {
   const [data, setData] = useState(initialData);
 
-  // Fetch data after every hour from initial render
+  const refreshData = async () => {
+    const predictionData = await fetchStateData(true);
+    setData(predictionData);
+  };
+
   useEffect(() => {
-    const intervalId = setInterval(async () => {
+    const fetchData = async () => {
       const predictionData = await fetchStateData();
       setData(predictionData);
-    }, 3600000); // Refresh data every hour
-    return () => clearInterval(intervalId); // Clean up interval on component unmount
+    };
+    fetchData(); // Fetch data initially when component mounts
   }, []);
-
-  // Sort states alphabetically and distribute them into three columns
-  const sortedStates = [...states].sort();
-  const numOfColumns = 3;
-  const statesPerColumn = Math.ceil(sortedStates.length / numOfColumns);
-  const columns = Array.from({ length: numOfColumns }, (_, colIndex) =>
-    sortedStates.slice(colIndex * statesPerColumn, (colIndex + 1) * statesPerColumn)
-  );
 
   return (
     <div className={styles.stateListContainer}>
       <h3>
-        This app is to help prevent Kidney Failure. I donated my kidney to my
-        father and I don&apos;t want other people to go through the same
-        surgery. By identifying where soda consumption is highest, we can kill
-        the problem at its root. High Fructose Corn Syrup (found much in soda)
-        is the number one contributor to Kidney Failure.
+        I donated my kidney to my father. Soda is the number one contributor to Kidney Failure.
       </h3>
       <h1 className={styles.title}>Soda Consumption Predictions</h1>
-      <h2 className={styles.title2}>in Real Time (every 24 hours)</h2>
-      <div className={styles.stateListColumns}>
-        {columns.map((column, colIndex) => (
-          <div key={colIndex} className={styles.stateListColumn}>
-            {column.map((state) => (
-              <div key={state} className={styles.stateListItem}>
-                {state}: {data[state] || "Loading..."}
-              </div>
-            ))}
-          </div>
-        ))}
+      <h2 className={styles.title2}>in Real Time (forecasting next year)</h2>
+      <div className={styles.stateListItem}>
+        {state}: {data[state] === "refresh your browser" ? 
+          "refresh your browser" : 
+          data[state] || "Loading..."}
       </div>
       <footer className={styles.footer}>Powered by Gemini API</footer>
       <EmailForm />
@@ -155,9 +73,8 @@ const StateList = ({ initialData }) => {
 };
 
 export const getStaticProps = async () => {
-  // Used the common function to be used in the component and for initial data load
-  const predictionData = await fetchStateData();
-  return { props: { initialData: predictionData } }; // Regenerate the page every 10 minutes
+  const predictionData = await fetchStateData(true); // Force refresh on initial load
+  return { props: { initialData: predictionData } };
 };
 
 export default StateList;

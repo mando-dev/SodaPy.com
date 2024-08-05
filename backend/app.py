@@ -13,8 +13,7 @@ from urllib.parse import unquote
 from cachetools import TTLCache
 import time
 from dotenv import load_dotenv
-from apscheduler.schedulers.background import BackgroundScheduler
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from flask_compress import Compress
 import pandas as pd
 import xgboost as xgb
@@ -40,16 +39,9 @@ PROJECT_NUMBER = os.getenv('PROJECT_NUMBER')
 ENDPOINT_ID = os.getenv('ENDPOINT_ID')
 endpoint_name = f"projects/{PROJECT_NUMBER}/locations/us-central1/endpoints/{ENDPOINT_ID}"
 
-states = [
-    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida",
-    "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine",
-    "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska",
-    "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-    "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas",
-    "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
-]
+state = "Texas"
 
-cache = TTLCache(maxsize=100, ttl=3600)
+cache = TTLCache(maxsize=100, ttl=300)  # Cache expires after 5 minutes
 executor = ThreadPoolExecutor(max_workers=10)
 
 def refresh_credentials_with_retry(credentials, retries=3, delay=5):
@@ -74,11 +66,10 @@ def filter_response(text):
             return value
     return None
 
-def fetch_prediction(state, model):
-    if state in cache:
+def fetch_prediction(state, model, force_refresh=False):
+    if state in cache and not force_refresh:
         return cache[state]
-    
-    retries = 5
+    retries = 10
     for attempt in range(retries):
         prompt = f"Please provide the soda consumption prediction percentage for {state} in the next year as a percentage."
         try:
@@ -91,35 +82,9 @@ def fetch_prediction(state, model):
         except Exception as e:
             logging.error(f"Error fetching prediction for {state}: {e}")
             time.sleep(2 ** attempt)
-    
-    cache[state] = 'next hour'
-    logging.info(f"Default prediction used for {state}: next hour")
-    return 'next hour'
-
-def fetch_all_predictions():
-    try:
-        refresh_credentials_with_retry(credentials)
-        vertexai.init(project=PROJECT_NUMBER, location="us-central1", credentials=credentials)
-        model = GenerativeModel(endpoint_name)
-        logging.info("Vertex AI model initialized")
-
-        with ThreadPoolExecutor() as executor:
-            future_to_state = {executor.submit(fetch_prediction, state, model): state for state in states}
-            for future in as_completed(future_to_state):
-                state = future_to_state[future]
-                try:
-                    prediction = future.result()
-                    if prediction is None:
-                        prediction = cache.get(state, 'No percentage found')
-                        if prediction is None:
-                            prediction = 'No percentage found'
-                    cache[state] = prediction
-                    logging.info(f"Prediction for {state}: {prediction}")
-                except Exception as e:
-                    logging.error(f"Error in fetch_all_predictions for {state}: {e}")
-                    cache[state] = cache.get(state, 'No percentage found')
-    except Exception as e:
-        logging.error(f"Failed to fetch all predictions: {e}")
+    cache[state] = 'refresh your browser'
+    logging.info(f"Default prediction used for {state}: refresh your browser")
+    return 'refresh your browser'
 
 @app.after_request
 def add_header(response):
@@ -132,7 +97,7 @@ def serve():
     response.cache_control.max_age = 86400
     return response
 
-@app.route("/<path:path>")
+@app.route("/static/<path:path>")
 def serve_static(path):
     response = make_response(send_from_directory(app.static_folder, path))
     response.cache_control.max_age = 86400
@@ -142,14 +107,13 @@ class Prediction(Resource):
     def get(self):
         logging.debug("Received request for prediction")
         state = unquote(request.args.get('state'))
-        logging.debug(f"Request state: {state}")
-        if state not in states:
+        force_refresh = request.args.get('force_refresh', 'false').lower() == 'true'
+        logging.debug(f"Request state: {state}, force_refresh: {force_refresh}")
+        if state != "Texas":
             return {'error': 'Invalid state'}, 400
-
         vertexai.init(project=PROJECT_NUMBER, location="us-central1", credentials=credentials)
         model = GenerativeModel(endpoint_name)
-        
-        future = executor.submit(fetch_prediction, state, model)
+        future = executor.submit(fetch_prediction, state, model, force_refresh)
         prediction = future.result()
         logging.debug(f"Prediction result: {prediction}")
         return jsonify({state: prediction})
@@ -163,7 +127,7 @@ class PredictSoda(Resource):
         # Load XGBoost model
         xgb_model_path = "xgboost_model_tuned.json"
         xgb_model = xgb.Booster()
-        xgb_model.load_model(xgb_model_path)
+        xgb_model.load_model(xgboost_model_path)
         dinput = xgb.DMatrix(input_df[features])
         xgb_prediction = xgb_model.predict(dinput)[0]
 
@@ -196,12 +160,6 @@ safety_settings = [
 api.add_resource(Prediction, '/prediction')
 api.add_resource(PredictSoda, '/predict')
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(fetch_all_predictions, 'interval', hours=24)  # Every 24 hours
-scheduler.start()
-
-fetch_all_predictions()
-
 if __name__ == "__main__":
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 8080))
     app.run(host='0.0.0.0', port=port, debug=True)

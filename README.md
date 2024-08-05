@@ -1,8 +1,13 @@
 ## SodaPy.com
 
 ## Project Overview
-You gotta  have two .env files. One in the root directory and one inside the backend folder. You also need a json key to authenticate into using Vertex AI API of my fine tuned model of Gemini. I can send you the key privately or generate one for you. But name of my current key file is “sodapy-96607d34a36f.json” that is stored inside the backend folder. Then you an run both backend and frontend server in development. To run frontend from root, you run “npm run dev”, and from backend folder you run “docker run -p 8080:8080 sodapy”  Dockerfle is located inside backend folder. Checkout the requirements.txt  to see dependencies/installments. 
 
+Must add Jsonkey file to backend folder 
+
+To run locally, use the dockerfile to run the backend app.py from backend folder
+
+Every time you make a change, you need build a new ‘out’ folder by running: npm run build. Then copy all file from ‘out’ folder to static folder inside backend. 
+cp -r out/* backend/static/
 
 
 

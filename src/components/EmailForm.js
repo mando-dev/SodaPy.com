@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
 import emailjs from 'emailjs-com';
-import Image from 'next/image';
-import profilePic from '../public/profile-pic.jpg'; // Ensure the path is correct
 import styles from "../styles/EmailForm.module.css";
 
 const EmailForm = () => {
@@ -43,7 +41,6 @@ const EmailForm = () => {
   return (
     <div className={styles.emailFormContainer}>
       <h1>Contact Me: Mando</h1>
-      <Image src={profilePic} alt="Your face" className={styles.profilePic} />
       {emailSent && <p className={styles.successMessage}>Email sent successfully!</p>}
       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
       <form ref={form} onSubmit={sendEmail} className={styles.form}>
