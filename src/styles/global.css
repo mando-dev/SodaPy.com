@@ -1,3 +1,17 @@
+/* styles/global.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #2c2c2c; /* Apply the background color to the entire page */
+  font-family: Arial, Helvetica, sans-serif; /* Default font family */
+}
+
+* {
+  box-sizing: border-box; /* Apply box-sizing globally */
+}

@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', // This ensures the static export behavior
   trailingSlash: true,
   images: {
+    // If you're not using images, you can leave this as default.
     unoptimized: true,
   },
-  // Remove the experimental section to re-enable Fast Refresh
+  reactStrictMode: true, // Enable React's strict mode for highlighting potential problems
 };
 
 export default nextConfig;

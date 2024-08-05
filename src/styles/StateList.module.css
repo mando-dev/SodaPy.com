@@ -1,77 +1,70 @@
+/* styles/StateList.module.css */
+
 .stateListContainer {
   text-align: center;
-  padding-top: 10px;
-  padding-bottom: 359px;
-  background-color: #2c2c2c; /* Lighter gray background */
-  margin: 0 auto; /* Center the container */
-  max-width: 1200px; /* Set a maximum width */
-  padding-left: 10px; /* Add padding to the left */
-  padding-right: 10px; /* Add padding to the right */
-}
-
-.stateListColumns {
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  align-items: center;
+  padding: 20px;
 }
 
 .stateListItem {
   background-color: #444;
   color: white;
-  padding: 40px; /* Increased padding */
-  margin: 5px auto; /* Center the item */
-  border-radius: 5px;
-  font-size: 40px; /* Increased font size significantly */
-  font-family: Arial, Helvetica, sans-serif; /* Changed font family */
-  max-width: 600px; /* Set a maximum width */
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  font-size: 24px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
 }
 
 .footer {
-  color: plum; /* Text color */
+  color: plum;
   padding: 10px;
   font-weight: bold;
   text-align: center;
-  font-size: 25px; /* Increased font size */
-  border-top: 0; /* Removed border */
-  margin-top: 20px; /* Added margin for spacing */
-  margin-bottom: 200px;
+  font-size: 25px;
+  margin-top: 20px;
 }
 
 .title {
-  color: plum; /* Text color */
+  color: plum;
   padding: 10px;
   font-weight: bold;
   text-align: center;
   font-size: 40px;
-  border-top: 0; /* Removed border */
-  border: none; /* Ensure no border */
-  outline: none; /* Ensure no outline */
+  margin-bottom: 10px;
 }
 
 .title2 {
-  color: plum; /* Text color */
+  color: plum;
   padding: 1px;
   text-align: center;
   font-size: 20px;
-  border-top: 0;
-  border: none; /* Ensure no border */
-  outline: none; /* Ensure no outline */
-  margin-top: 50px;
+  margin-top: 10px;
 }
 
 .stateListContainer h3 {
-  max-width: 600px; /* Adjust this value to your preferred width */
-  margin: 0 auto; /* Center the text */
+  max-width: 600px;
+  margin: 0 auto;
   padding: 10px;
   text-align: center;
   color: white;
-  line-height: 1.8; /* Adjust line height for more spacing between lines */
-  margin-bottom: 10px; /* Adjust bottom margin for more spacing below the paragraph */
+  line-height: 1.8;
+  margin-bottom: 10px;
   font-size: 25px;
 }
 
 .specificText {
   color: white;
-  border: none; /* Ensure no border */
-  outline: none; /* Ensure no outline */
+}
+
+.contactTitle {
+  color: white;
+  font-size: 1.5em;
+  margin-top: 20px;
 }

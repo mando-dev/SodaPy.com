@@ -41,7 +41,8 @@ endpoint_name = f"projects/{PROJECT_NUMBER}/locations/us-central1/endpoints/{END
 
 state = "Texas"
 
-cache = TTLCache(maxsize=100, ttl=300)  # Cache expires after 5 minutes
+# Cache with increased TTL and configurable maxsize
+cache = TTLCache(maxsize=100, ttl=3000)  # Cache expires after 50 minutes
 executor = ThreadPoolExecutor(max_workers=10)
 
 def refresh_credentials_with_retry(credentials, retries=3, delay=5):
@@ -127,7 +128,7 @@ class PredictSoda(Resource):
         # Load XGBoost model
         xgb_model_path = "xgboost_model_tuned.json"
         xgb_model = xgb.Booster()
-        xgb_model.load_model(xgboost_model_path)
+        xgb_model.load_model(xgb_model_path)
         dinput = xgb.DMatrix(input_df[features])
         xgb_prediction = xgb_model.predict(dinput)[0]
 

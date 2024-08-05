@@ -40,7 +40,7 @@ const EmailForm = () => {
 
   return (
     <div className={styles.emailFormContainer}>
-      <h1>Contact Me: Mando</h1>
+      <h1 className={styles.contactTitle}>Contact Me: Mando</h1> {/* Ensure this uses the contactTitle class */}
       {emailSent && <p className={styles.successMessage}>Email sent successfully!</p>}
       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
       <form ref={form} onSubmit={sendEmail} className={styles.form}>
