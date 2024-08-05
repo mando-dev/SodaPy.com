@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export', // Enable static export
   trailingSlash: true,
   images: {
     // If you're not using images, you can leave this as default.

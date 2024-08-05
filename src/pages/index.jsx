@@ -28,15 +28,30 @@ const StateList = ({ initialData }) => {
   );
 };
 
-export const getServerSideProps = async () => {
-  const predictionData = await fetchStateData();
-  return { props: { initialData: predictionData } };
+export const getStaticProps = async () => {
+  try {
+    const predictionData = await fetchStateData();
+    return { props: { initialData: predictionData } };
+  } catch (error) {
+    console.error("Error fetching prediction data:", error);
+    return {
+      props: { initialData: { [state]: "refresh your browser" } }, // Fallback data
+    };
+  }
 };
 
 export default StateList;
 
 async function fetchStateData(forceRefresh = false) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${encodeURIComponent(state)}&force_refresh=${forceRefresh}`);
-  const result = await response.json();
-  return { [state]: result[state] || "refresh your browser" };
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${encodeURIComponent(state)}&force_refresh=${forceRefresh}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data: ${response.statusText}`);
+    }
+    const result = await response.json();
+    return { [state]: result[state] || "refresh your browser" };
+  } catch (error) {
+    console.error("Error in fetchStateData:", error);
+    throw error; // Rethrow error to handle in getStaticProps
+  }
 }
