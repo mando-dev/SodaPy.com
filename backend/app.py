@@ -89,19 +89,22 @@ def fetch_prediction(state, model, force_refresh=False):
 
 @app.after_request
 def add_header(response):
-    response.cache_control.max_age = 86400
+    response.cache_control.max_age = 1  # Set to lowest possible value (1 second)
+    response.cache_control.must_revalidate = True
     return response
 
 @app.route("/")
 def serve():
     response = make_response(send_from_directory(app.static_folder, 'index.html'))
-    response.cache_control.max_age = 86400
+    response.cache_control.max_age = 1
+    response.cache_control.must_revalidate = True
     return response
 
 @app.route("/static/<path:path>")
 def serve_static(path):
     response = make_response(send_from_directory(app.static_folder, path))
-    response.cache_control.max_age = 86400
+    response.cache_control.max_age = 1
+    response.cache_control.must_revalidate = True
     return response
 
 class Prediction(Resource):
