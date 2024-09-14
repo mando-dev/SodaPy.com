@@ -44,7 +44,11 @@ export default StateList;
 
 async function fetchStateData(forceRefresh = false) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${encodeURIComponent(state)}&force_refresh=${forceRefresh}`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/prediction?state=${encodeURIComponent(state)}&force_refresh=${forceRefresh}`, {
+      method: 'GET',
+      cache: 'no-store',  // Ensure no caching in the browser
+    });
+
     if (!response.ok) {
       throw new Error(`Failed to fetch data: ${response.statusText}`);
     }

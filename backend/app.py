@@ -115,12 +115,24 @@ class Prediction(Resource):
         logging.debug(f"Request state: {state}, force_refresh: {force_refresh}")
         if state != "Texas":
             return {'error': 'Invalid state'}, 400
+        
+        # Initialize the Vertex AI model
         vertexai.init(project=PROJECT_NUMBER, location="us-central1", credentials=credentials)
         model = GenerativeModel(endpoint_name)
+        
+        # Fetch the prediction asynchronously
         future = executor.submit(fetch_prediction, state, model, force_refresh)
         prediction = future.result()
+        
+        # Create response and set cache control headers
+        response = jsonify({state: prediction})
+        response.cache_control.no_store = True  # Disable storing cache
+        response.cache_control.no_cache = True  # Always revalidate the resource
+        response.cache_control.must_revalidate = True
+        response.cache_control.max_age = 0
+        
         logging.debug(f"Prediction result: {prediction}")
-        return jsonify({state: prediction})
+        return response
 
 class PredictSoda(Resource):
     def post(self):
